@@ -16,6 +16,7 @@
     integrity="sha512-nhsc1ymyruxifcj/kfrwoc561yphpc5jtzgvbuzx5vozkpwvq+4nxhpdfgmx8xqexrcpagltj9sibwinxa8x5w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" defer/>
     <link rel="stylesheet" href="https://pietropassarelli.com/11ty-auto-navigation-book-template/public/css/style.css" defer>
+    <link rel="stylesheet" href="https://pietropassarelli.com/11ty-auto-navigation-book-template/public/css/mobile.css" defer>
     <link rel="stylesheet" href="https://pietropassarelli.com/11ty-auto-navigation-book-template/public/css/dark-mode.css" defer>
     <link rel="stylesheet" href="https://pietropassarelli.com/11ty-auto-navigation-book-template/public/css/fontawesome-free-5.15.4-web/css/all.min.css"/>
 
@@ -272,7 +273,7 @@ ddtreemenu.dotask = function (target, functionref, tasktype) { //assign a functi
   </script>
 
   
-  
+
 </head>
 
   <body>
@@ -287,7 +288,10 @@ ddtreemenu.dotask = function (target, functionref, tasktype) { //assign a functi
 
 
 
-<nav class="navigation-primary navigation-primary--light stretch-horizontal-M"><div class="wrapper-site-info"><p>
+<nav class="navigation-primary navigation-primary--light stretch-horizontal-M"><div class="btn-toggle-page-wrapper">
+ <button class="btn-toggle-page" id="nav-bar-btn-toggle"> <i class="fas fa-bars"></i></button>
+ </div>
+  <div class="wrapper-site-info"><p>
       <b>11ty auto navigation book template</b>
     </p>
     <p>
@@ -741,7 +745,11 @@ ddtreemenu.dotask = function (target, functionref, tasktype) { //assign a functi
 </nav>
 
         <main class="main">
-
+          <div class="btn-toggle-page-wrapper">
+            <button class="btn-toggle-page" id="main-btn-toggle">
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
           <img src="https://images.unsplash.com/photo-1552353617-3bfd679b3bdd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=2250&amp;q=80" class="img-hero-wrapper" alt=""/><div class="post-wrapper">
     <div class="post"><div class="emoji-wrapper">
                     🚢
@@ -839,5 +847,22 @@ ddtreemenu.dotask = function (target, functionref, tasktype) { //assign a functi
 
     init();
   </script>
+
+    <script  type="text/javascript">
+      const navBarBtnToggleEl = document.querySelector('#nav-bar-btn-toggle');
+      const mainBtnToggleEl = document.querySelector('#main-btn-toggle');
+      const navigationPrimaryEl = document.querySelector('.navigation-primary')
+      const mainPrimaryEl = document.querySelector('.main')
+      navBarBtnToggleEl.onclick = () => {
+        navigationPrimaryEl.style.display = 'none';
+        mainPrimaryEl.style.display = 'block';
+         mainPrimaryEl.style.width = '100%';
+      }
+
+      mainBtnToggleEl.onclick = () => {
+        navigationPrimaryEl.style.display = 'block';
+        mainPrimaryEl.style.display = 'none';
+      }
+    </script>
   </body>
 </html>
