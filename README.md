@@ -126,6 +126,8 @@ This publishes the site to github pages for this github repository.
 - [x] edit on github link 
 - [x] support for font awesome icons
 - [x] optional footer
+- [ ] ...
+- [ ] ...
 
 _stretch goals_
 - [x] add footer 
