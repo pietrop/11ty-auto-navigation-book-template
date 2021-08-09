@@ -7,6 +7,7 @@ const embedVimeo = require("eleventy-plugin-vimeo-embed");
 
 const mdIterator = require('markdown-it-for-inline')
 const markdownIt = require('markdown-it');
+const markdownItCheckbox = require('markdown-it-checkbox')
 
 const IMAGES = ["avif", "jpeg", "jpg", "png", "giff", "gif", "webp"];
 async function imageShortcode(src, alt, sizes) {
@@ -82,12 +83,17 @@ module.exports = function (eleventyConfig) {
       tokens[idx].attrPush(['target', '_blank'])
       tokens[idx].attrPush(['rel', 'noopener noreferrer'])
     }
-  })
+  }).use(markdownItCheckbox)
   // .use(markdownItAnchor, {
   //   permalink: true,
   //   permalinkClass: "direct-link",
   //   permalinkSymbol: "#"
   // })
+
+
+
+
+
   eleventyConfig.setLibrary("md", markdownLibrary);
 
   return {
