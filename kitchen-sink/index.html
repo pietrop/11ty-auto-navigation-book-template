@@ -746,20 +746,15 @@ Test details summary html tag
 </details>
 <hr>
 <h2>link</h2>
-<p>In a quam at <a href="https://pietropassarelli.com">my site</a> nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.</p>
+<p>In a quam at <a href="https://pietropassarelli.com" target="_blank" rel="noopener noreferrer">my site</a> nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.</p>
  <details>
 <summary>Code example</summary>
 <pre class="language-markdown"><code class="language-markdown">In a quam at <span class="token url">[<span class="token content">my site</span>](<span class="token url">https://pietropassarelli.com</span>)</span> nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.</code></pre>
 </details>
-<h3>open in new tab</h3>
-<p>In a quam at <a href="https://pietropassarelli.com"  target="_blank" rel="noopener noreferrer">my site</a> nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.</p>
- <details>
-<summary>Code example</summary>
-<pre class="language-html"><code class="language-html">In a quam at <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://pietropassarelli.com<span class="token punctuation">"</span></span>  <span class="token attr-name">target</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>_blank<span class="token punctuation">"</span></span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>noopener noreferrer<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>my site<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span> nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.</code></pre>
-</details>
+<p>Note that if your link starts with <code>https://</code>, this is configure to open it in a new tab.</p>
 <h3>internal links</h3>
-<p><a href="/animals">animals</a>
-<a href="/animals/mammals">mammals</a>
+<p><a href="/animals">animals</a><br>
+<a href="/animals/mammals">mammals</a><br>
 <a href="/Moby%20Dick">Moby dick</a></p>
 <details>
 <summary>Code example</summary>
@@ -798,7 +793,7 @@ Test details summary html tag
 <h2>Images</h2>
 <h3>Regular markdown image</h3>
 <p><img src="https://images.unsplash.com/photo-1475727946784-2890c8fdb9c8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=2724&amp;q=80" alt="Alt image text"></p>
-<p>Image from <a href="https://unsplash.com/photos/fHXP17AxOEk">unsplash</a></p>
+<p>Image from <a href="https://unsplash.com/photos/fHXP17AxOEk" target="_blank" rel="noopener noreferrer">unsplash</a></p>
 <details>
 <summary>Code example</summary>
 Just a markdown image
@@ -806,7 +801,7 @@ Just a markdown image
 </code></pre>
 </details>
 <h3>markdown image with link</h3>
-<p><a href="https://unsplash.com/photos/gHwDURuSafI"><img src="https://images.unsplash.com/photo-1510158105534-9b01f2462ce1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=2700&amp;q=80" alt="Alt image text"></a></p>
+<p><a href="https://unsplash.com/photos/gHwDURuSafI" target="_blank" rel="noopener noreferrer"><img src="https://images.unsplash.com/photo-1510158105534-9b01f2462ce1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=2700&amp;q=80" alt="Alt image text"></a></p>
 <details>
 <summary>Code example</summary>
 A markdown image wrapped in a markdown link
