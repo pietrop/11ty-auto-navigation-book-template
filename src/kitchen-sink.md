@@ -261,7 +261,8 @@ Duis facilisis nisi quis risus tristique pellentesque. Aliquam a ex tellus. Clas
 ## Markdown rich text editing 
 
 **Aliquam a ex tellus.**      
-_Sed ac tempor tortor, ut lobortis erat._
+_Sed ac tempor tortor, ut lobortis erat._     
+~~Strikethrough~~  
 
 <details>
 <summary>Code example</summary>
@@ -269,6 +270,7 @@ _Sed ac tempor tortor, ut lobortis erat._
 ```markdown
 **Aliquam a ex tellus.**      
 _Sed ac tempor tortor, ut lobortis erat._
+~~Strikethrough~~ 
 ```
 </details>
 
