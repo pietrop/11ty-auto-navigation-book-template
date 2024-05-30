@@ -1,1 +1,0 @@
-# Evaluative metering
