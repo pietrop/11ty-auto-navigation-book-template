@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en_US">
+
+  <head>
+    <title>
+        11ty auto navigation book template - Kitchen sink</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+    integrity="sha512-nhsc1ymyruxifcj/kfrwoc561yphpc5jtzgvbuzx5vozkpwvq+4nxhpdfgmx8xqexrcpagltj9sibwinxa8x5w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" defer/>
+
+    <link rel="stylesheet" href="http://localhost:8080/public/css/style.css" defer>
+    <link rel="stylesheet" href="http://localhost:8080/public/css/dark-mode.css" defer>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    
+    crossorigin="anonymous" referrerpolicy="no-referrer" defer/>
+
+
+
+
+
+
+    
+
+    
+<script type="text/javascript">
+var persisteduls = new Object()
+var ddtreemenu = new Object()
+
+ddtreemenu.closefolder = "http://localhost:8080/public/simpletreemenu/closed.gif"; //set image path to "closed" folder image
+ddtreemenu.openfolder = "http://localhost:8080/public/simpletreemenu/open.gif"; //set image path to "open" folder image
+
+//////////No need to edit beyond here///////////////////////////
+
+ddtreemenu.createTree = function (treeid, enablepersist, persistdays) {
+    var ultags = document.getElementById(treeid).getElementsByTagName("ul")
+    if (typeof persisteduls[treeid] == "undefined")
+        persisteduls[treeid] = (enablepersist == true && ddtreemenu.getCookie(treeid) != "") ? ddtreemenu.getCookie(treeid).split(",") : ""
+    for (var i = 0; i < ultags.length; i++)
+        ddtreemenu.buildSubTree(treeid, ultags[i], i)
+    if (enablepersist == true) { //if enable persist feature
+        var durationdays = (typeof persistdays == "undefined") ? 1 : parseInt(persistdays)
+        ddtreemenu.dotask(window, function () { ddtreemenu.rememberstate(treeid, durationdays) }, "unload") //save opened UL indexes on body unload
+    }
+}
+
+ddtreemenu.buildSubTree = function (treeid, ulelement, index) {
+    ulelement.parentNode.className = "submenu"
+    if (typeof persisteduls[treeid] == "object") { //if cookie exists (persisteduls[treeid] is an array versus "" string)
+        if (ddtreemenu.searcharray(persisteduls[treeid], index)) {
+            ulelement.setAttribute("rel", "open")
+            ulelement.style.display = "block"
+            ulelement.parentNode.style.backgroundImage = "url(" + ddtreemenu.openfolder + ")"
+        }
+        else
+            ulelement.setAttribute("rel", "closed")
+    } //end cookie persist code
+    else if (ulelement.getAttribute("rel") == null || ulelement.getAttribute("rel") == false) //if no cookie and UL has NO rel attribute explicted added by user
+        ulelement.setAttribute("rel", "closed")
+    else if (ulelement.getAttribute("rel") == "open") //else if no cookie and this UL has an explicit rel value of "open"
+        ddtreemenu.expandSubTree(treeid, ulelement) //expand this UL plus all parent ULs (so the most inner UL is revealed!)
+    ulelement.parentNode.onclick = function (e) {
+        var submenu = this.getElementsByTagName("ul")[0]
+        if (submenu.getAttribute("rel") == "closed") {
+            submenu.style.display = "block"
+            submenu.setAttribute("rel", "open")
+            ulelement.parentNode.style.backgroundImage = "url(" + ddtreemenu.openfolder + ")"
+        }
+        else if (submenu.getAttribute("rel") == "open") {
+            submenu.style.display = "none"
+            submenu.setAttribute("rel", "closed")
+            ulelement.parentNode.style.backgroundImage = "url(" + ddtreemenu.closefolder + ")"
+        }
+        ddtreemenu.preventpropagate(e)
+    }
+    ulelement.onclick = function (e) {
+        ddtreemenu.preventpropagate(e)
+    }
+}
+
+ddtreemenu.expandSubTree = function (treeid, ulelement) { //expand a UL element and any of its parent ULs
+    var rootnode = document.getElementById(treeid)
+    var currentnode = ulelement
+    currentnode.style.display = "block"
+    currentnode.parentNode.style.backgroundImage = "url(" + ddtreemenu.openfolder + ")"
+    while (currentnode != rootnode) {
+        if (currentnode.tagName == "UL") { //if parent node is a UL, expand it too
+            currentnode.style.display = "block"
+            currentnode.setAttribute("rel", "open") //indicate it's open
+            currentnode.parentNode.style.backgroundImage = "url(" + ddtreemenu.openfolder + ")"
+        }
+        currentnode = currentnode.parentNode
+    }
+}
+
+ddtreemenu.flatten = function (treeid, action) { //expand or contract all UL elements
+    var ultags = document.getElementById(treeid).getElementsByTagName("ul")
+    for (var i = 0; i < ultags.length; i++) {
+        ultags[i].style.display = (action == "expand") ? "block" : "none"
+        var relvalue = (action == "expand") ? "open" : "closed"
+        ultags[i].setAttribute("rel", relvalue)
+        ultags[i].parentNode.style.backgroundImage = (action == "expand") ? "url(" + ddtreemenu.openfolder + ")" : "url(" + ddtreemenu.closefolder + ")"
+    }
+}
+
+ddtreemenu.rememberstate = function (treeid, durationdays) { //store index of opened ULs relative to other ULs in Tree into cookie
+    var ultags = document.getElementById(treeid).getElementsByTagName("ul")
+    var openuls = new Array()
+    for (var i = 0; i < ultags.length; i++) {
+        if (ultags[i].getAttribute("rel") == "open")
+            openuls[openuls.length] = i //save the index of the opened UL (relative to the entire list of ULs) as an array element
+    }
+    if (openuls.length == 0) //if there are no opened ULs to save/persist
+        openuls[0] = "none open" //set array value to string to simply indicate all ULs should persist with state being closed
+    ddtreemenu.setCookie(treeid, openuls.join(","), durationdays) //populate cookie with value treeid=1,2,3 etc (where 1,2... are the indexes of the opened ULs)
+}
+
+////A few utility functions below//////////////////////
+
+ddtreemenu.getCookie = function (Name) { //get cookie value
+    var re = new RegExp(Name + "=[^;]+", "i"); //construct RE to search for target name/value pair
+    if (document.cookie.match(re)) //if cookie found
+        return document.cookie.match(re)[0].split("=")[1] //return its value
+    return ""
+}
+
+ddtreemenu.setCookie = function (name, value, days) { //set cookei value
+    var expireDate = new Date()
+    //set "expstring" to either future or past date, to set or delete cookie, respectively
+    var expstring = expireDate.setDate(expireDate.getDate() + parseInt(days))
+    document.cookie = name + "=" + value + "; expires=" + expireDate.toGMTString() + "; path=/";
+}
+
+ddtreemenu.searcharray = function (thearray, value) { //searches an array for the entered value. If found, delete value from array
+    var isfound = false
+    for (var i = 0; i < thearray.length; i++) {
+        if (thearray[i] == value) {
+            isfound = true
+            thearray.shift() //delete this element from array for efficiency sake
+            break
+        }
+    }
+    return isfound
+}
+
+ddtreemenu.preventpropagate = function (e) { //prevent action from bubbling upwards
+    if (typeof e != "undefined")
+        e.stopPropagation()
+    else
+        event.cancelBubble = true
+}
+
+ddtreemenu.dotask = function (target, functionref, tasktype) { //assign a function to execute to an event handler (ie: onunload)
+    var tasktype = (window.addEventListener) ? tasktype : "on" + tasktype
+    if (target.addEventListener)
+        target.addEventListener(tasktype, functionref, false)
+    else if (target.attachEvent)
+        target.attachEvent(tasktype, functionref)
+}
+
+</script>
+    <style>
+.treeview ul{ /*CSS for Simple Tree Menu*/
+    margin: 0;
+    padding: 0;
+    }
+    
+    .treeview li{ /*Style for LI elements in general (excludes an LI that contains sub lists)*/
+    background: transparent url('http://localhost:8080/public/simpletreemenu/list.gif') no-repeat left center;
+    list-style-type: none;
+    padding-left: 22px;
+    margin-bottom: 3px;
+    }
+    
+    .treeview li.submenu{ /* Style for LI that contains sub lists (other ULs). */
+    background: transparent url('http://localhost:8080/public/simpletreemenu/closed.gif') no-repeat left 1px;
+    cursor: hand !important;
+    cursor: pointer !important;
+    }
+    
+    
+    .treeview li.submenu ul{ /*Style for ULs that are children of LIs (submenu) */
+    display: none; /*Hide them by default. Don't delete. */
+    }
+    
+    .treeview .submenu ul li{ /*Style for LIs of ULs that are children of LIs (submenu) */
+    cursor: default;
+    }
+
+  </style>
+    
+
+    <!-- Syntax highlight  -->
+    <link id="prism-css" href="https://unpkg.com/prismjs@1.20.0/themes/prism.css" rel="stylesheet" defer>
+    <link rel="shortcut icon" href="http://localhost:8080/public/favicon.ico">
+</head>
+
+  <body>
+    <div class="container default-pages">
+      
+      <div class="wrapper">
+
+        
+
+
+
+
+
+
+<nav class="navigation-primary navigation-primary--light stretch-horizontal-M"><div class="wrapper-site-info"><p>
+      <b>11ty auto navigation book template</b>
+    </p>
+    <p>
+      <i>Markdown directory structure-based navigation with eleventy-plugin-navigation.</i>
+    </p><p>
+        <a href="https://github.com/pietrop/11ty-auto-navigation-book-template"  target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-layer-group"></i></a> <code>1.0.0</code>
+      </p><img class="site-owner-image" src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=3289&amp;q=80" alt="test" width="100%" height="auto"></div><form class="search-form" onsubmit="duckSearch()" action="javascript:void(0)">
+    <input id="searchField" type="text" value="" placeholder="Search..."> <img class="duck-icon" src="http://localhost:8080/img/rubber-duck.png" alt="decoration rubber duck" width="20" height="20">
+</form>
+
+
+<script type="text/javascript">
+    function duckSearch() {
+        var searchField = document.getElementById("searchField");
+        if (searchField && searchField.value) {
+            var query = escape("site:http://localhost:8080"+" "+ searchField.value);
+            window.open ( "https://duckduckgo.com/?q=" + query, "_blank");
+        }
+    }
+</script>
+
+      <a href="javascript:ddtreemenu.flatten('treemenu3', 'expand')" class="navigation-link">Expand All</a> | <a href="javascript:ddtreemenu.flatten('treemenu3', 'contact')" class="navigation-link">Collapse All</a>
+
+      
+
+      
+  </ul>
+
+  <ul class="navigation-link navigation-primary__items treeview"  id="treemenu3">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/"
+        class="navigation-link
+          navigation-primary__link
+          
+          
+        "
+      >
+            <span title="Home"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🏡</span>
+              Home
+            </span>
+          </a></li>
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        aria-current="page"
+        href="http://localhost:8080/kitchen sink/"
+        class="navigation-link
+          navigation-primary__link
+          is-active
+          
+        "
+      >
+            <span title="Kitchen sink"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🍳</span>
+              Kitchen sink
+            </span>
+          </a></li>
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/how-to-use/"
+        class="navigation-link
+          navigation-primary__link
+          
+          
+        "
+      >
+            <span title="How to use"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🚧</span>
+              How to use
+            </span>
+          </a></li>
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/Moby Dick/"
+        class="navigation-link
+          navigation-primary__link
+          
+          
+        "
+      >
+            <span title="Moby Dick"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🚢</span>
+              Moby Dick
+            </span>
+          </a><ul class="navigation-link navigation-primary__sub-items">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/Moby Dick/CHAPTER 1. Loomings/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 1. Loomings"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐳</span>
+              CHAPTER 1. Loomings
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/Moby Dick/CHAPTER 2. The Carpet-Bag/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 2. The Carpet-Bag"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐋</span>
+              CHAPTER 2. The Carpet-Bag
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/Moby Dick/CHAPTER 3. The Spouter-Inn/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 3. The Spouter-Inn"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji"></span>
+              CHAPTER 3. The Spouter-Inn
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/Moby Dick/CHAPTER 4. The Counterpane/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 4. The Counterpane"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji"></span>
+              CHAPTER 4. The Counterpane
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/Moby Dick/CHAPTER 5. Breakfast/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 5. Breakfast"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji"></span>
+              CHAPTER 5. Breakfast
+            </span>
+          </a></li>
+              </ul></li>
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/animals/"
+        class="navigation-link
+          navigation-primary__link
+          
+          
+        "
+      >
+            <span title="Animals"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🦒</span>
+              Animals
+            </span>
+          </a><ul class="navigation-link navigation-primary__sub-items">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/animals/birds/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Birds"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐦</span>
+              Birds
+            </span>
+          </a><ul class="navigation-link navigation-primary__sub-items">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/animals/birds/eagle/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="eagle"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🦅</span>
+              eagle
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/animals/birds/piggeon/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="piggeon"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji"></span>
+              piggeon
+            </span>
+          </a></li>
+              </ul></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/animals/mammals/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Mammals"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐬</span>
+              Mammals
+            </span>
+          </a><ul class="navigation-link navigation-primary__sub-items">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/animals/mammals/tigers/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Tigers"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐯</span>
+              Tigers
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/animals/mammals/humans/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Humans"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🧑</span>
+              Humans
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href="http://localhost:8080/animals/mammals/bats/"
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Bats"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🦇</span>
+              Bats
+            </span>
+          </a></li>
+              </ul></li>
+              </ul></li></ul>
+</nav>
+
+        <main class="main">
+
+          <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=2035&amp;q=80" class="img-hero-wrapper" alt=""/><div class="post-wrapper">
+    <div class="post"><div class="emoji-wrapper">
+                    🍳
+                </div><h1 class="post-title">Kitchen sink</h1><div class="post-content-wrapper">
+                <div class="post-content">
+                    <hr>
+<h2>Text</h2>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi finibus mi vulputate, venenatis lorem sed, sodales mi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec in eleifend nulla.</p>
+<p>Pellentesque egestas hendrerit libero, id sollicitudin eros rhoncus at. Integer mattis, mauris nec pulvinar vehicula, tortor mi condimentum leo, a faucibus nisl magna luctus odio. Etiam varius enim et purus pulvinar cursus.</p>
+<p>Nullam pharetra maximus tellus, eget dictum arcu sagittis quis. Nam at hendrerit eros. Sed vel ultrices lorem. Cras iaculis felis sapien, sed sagittis diam dignissim vehicula.</p>
+<hr>
+<h2>Headers</h2>
+<h1>Heading 1</h1>
+<h2>Heading 2</h2>
+<h3>Heading 3</h3>
+<h4>Heading 4</h4>
+<h5>Heading 5</h5>
+<h6>Heading 6</h6>
+<hr>
+<h2>code</h2>
+<h3>Code blocks</h3>
+<pre><code>console.log('hello world')
+</code></pre>
+<h3>syntax highlighting</h3>
+<pre class="language-js"><code class="language-js">console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'hello world'</span><span class="token punctuation">)</span></code></pre>
+<h3>Inline Code snippet</h3>
+<p>In a quam at <code>console.log('hello world')</code> nisi bibendum blandit vel at mi.</p>
+<hr>
+<h2>details/summary html tag</h2>
+<details>
+<summary>Find out more</summary>
+Test details summary html tag
+</details>
+<hr>
+<h2>link</h2>
+<p>In a quam at <a href="https://pietropassarelli.com">my site</a> nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.</p>
+ <details>
+<summary>Code example</summary>
+<pre class="language-markdown"><code class="language-markdown">In a quam at <span class="token url">[<span class="token content">my site</span>](<span class="token url">https://pietropassarelli.com</span>)</span> nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.</code></pre>
+</details>
+<h3>open in new tab</h3>
+<p>In a quam at <a href="https://pietropassarelli.com"  target="_blank" rel="noopener noreferrer">my site</a> nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.</p>
+ <details>
+<summary>Code example</summary>
+<pre class="language-html"><code class="language-html">In a quam at <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://pietropassarelli.com<span class="token punctuation">"</span></span>  <span class="token attr-name">target</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>_blank<span class="token punctuation">"</span></span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>noopener noreferrer<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>my site<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span> nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.</code></pre>
+</details>
+<h3>internal links</h3>
+<p><a href="/animals">animals</a>
+<a href="/animals/mammals">mammals</a>
+<a href="/Moby%20Dick">Moby dick</a></p>
+<details>
+<summary>Code example</summary>
+<pre class="language-markdown"><code class="language-markdown"><span class="token url">[<span class="token content">animals</span>](<span class="token url">/animals</span>)</span><br><span class="token url">[<span class="token content">mammals</span>](<span class="token url">/animals/mammals</span>)</span><br><span class="token url">[<span class="token content">Moby dick</span>](<span class="token url">/Moby%20Dick</span>)</span></code></pre>
+</details>
+<hr>
+<h2>List</h2>
+<h3>Unordered list</h3>
+<ul>
+<li>Cras dictum eros ut commodo feugiat.</li>
+<li>Vivamus urna lectus, consequat vel fermentum sed,</li>
+<li>pellentesque ac tortor.</li>
+<li>Vestibulum lacinia varius mauris eu hendrerit.</li>
+<li>Duis facilisis nisi quis risus tristique pellentesque.</li>
+<li>Aliquam a ex tellus.</li>
+<li>Class aptent taciti sociosqu ad litora torquent per conubia nostra,</li>
+<li>per inceptos himenaeos.</li>
+</ul>
+<h3>Ordered list</h3>
+<ol>
+<li>Cras dictum eros ut commodo feugiat.</li>
+<li>Vivamus urna lectus, consequat vel fermentum sed,</li>
+<li>pellentesque ac tortor.</li>
+<li>Vestibulum lacinia varius mauris eu hendrerit.</li>
+<li>Duis facilisis nisi quis risus tristique pellentesque.</li>
+<li>Aliquam a ex tellus.</li>
+<li>Class aptent taciti sociosqu ad litora torquent per conubia nostra,</li>
+<li>per inceptos himenaeos.</li>
+</ol>
+<hr>
+<h2>Quote</h2>
+<blockquote>
+<p>Duis facilisis nisi quis risus tristique pellentesque. Aliquam a ex tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed ac tempor tortor, ut lobortis erat. Vivamus gravida sem massa, ut lobortis neque consectetur sit amet. Morbi sed eros cursus, euismod tellus et, sollicitudin mi. Nam eu velit efficitur, consectetur mauris rutrum, ultrices odio.</p>
+</blockquote>
+<hr>
+<h2>Images</h2>
+<h3>Regular markdown image</h3>
+<p><img src="https://images.unsplash.com/photo-1475727946784-2890c8fdb9c8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=2724&amp;q=80" alt="Alt image text"></p>
+<p>Image from <a href="https://unsplash.com/photos/fHXP17AxOEk">unsplash</a></p>
+<details>
+<summary>Code example</summary>
+Just a markdown image
+<pre><code>![Alt image text](https://images.unsplash.com/photo-1475727946784-2890c8fdb9c8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=2724&amp;q=80)
+</code></pre>
+</details>
+<h3>markdown image with link</h3>
+<p><a href="https://unsplash.com/photos/gHwDURuSafI"><img src="https://images.unsplash.com/photo-1510158105534-9b01f2462ce1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=2700&amp;q=80" alt="Alt image text"></a></p>
+<details>
+<summary>Code example</summary>
+A markdown image wrapped in a markdown link
+<pre><code>[![Alt image text](https://images.unsplash.com/photo-1475727946784-2890c8fdb9c8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=2724&amp;q=80)](https://unsplash.com/photos/fHXP17AxOEk)
+</code></pre>
+</details>
+<hr>
+<h2>Video</h2>
+<video controls preload='auto' width='100%' height='auto' poster='' data-setup='{}'>
+  <source src='https://www.w3schools.com/html/mov_bbb.mp4'  type='video/mp4' />
+</video>
+<details>
+<summary>Code example</summary>
+<pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>video</span> <span class="token attr-name">controls</span> <span class="token attr-name">preload</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">'</span>auto<span class="token punctuation">'</span></span> <span class="token attr-name">width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">'</span>100%<span class="token punctuation">'</span></span> <span class="token attr-name">height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">'</span>auto<span class="token punctuation">'</span></span> <span class="token attr-name">poster</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">'</span><span class="token punctuation">'</span></span> <span class="token attr-name">data-setup</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">'</span>{}<span class="token punctuation">'</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>source</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">'</span>https://www.w3schools.com/html/mov_bbb.mp4<span class="token punctuation">'</span></span>  <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">'</span>video/mp4<span class="token punctuation">'</span></span> <span class="token punctuation">/></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>video</span><span class="token punctuation">></span></span></code></pre>
+</details>
+<hr>
+<h2>YouTube</h2>
+<p>To embed youtube, you just need to place the youtube url in it's own line, thanks to pugin.</p>
+<div id="id-zyjjOplY" class="eleventy-plugin-youtube-embed"style="position:relative;width:100%;padding-top: 56.25%;"><iframe style="position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;" width="100%" height="100%" frameborder="0" title="Embedded YouTube video" src="https://www.youtube-nocookie.com/embed/id-zyjjOplY" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<details>
+<summary>Code example</summary>
+<pre><code>https://youtu.be/id-zyjjOplY
+</code></pre>
+</details>
+<hr>
+<h2>Vimeo</h2>
+<p>To embed vimeo, you just need to place the vimeo url in it's own line, thanks to pugin.</p>
+<div id="vimeo-128057278" class="eleventy-plugin-vimeo-embed" style="position:relative;width:100%;padding-top:56.25%;"><iframe style="position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;" frameborder="0" src="https://player.vimeo.com/video/128057278?dnt=1" allowfullscreen></iframe></div>
+<details>
+<summary>Code example</summary>
+<pre><code>https://vimeo.com/128057278
+</code></pre>
+</details>
+<hr>
+<h2>Twitter</h2>
+<p>You can also embed a tweet, by just placing the tweet url on it's own line in the markdown file.</p>
+<div class="eleventy-plugin-embed-twitter"><blockquote id="tweet-1417199007072497668" class="twitter-tweet"><a href="https://twitter.com/pietropassarell/status/1417199007072497668"></a></blockquote></div><script src="https://platform.twitter.com/widgets.js" charset="utf-8" async></script>
+<details>
+<summary>Code example</summary>
+<pre><code>https://twitter.com/pietropassarell/status/1417199007072497668
+</code></pre>
+</details>
+<hr>
+<h2>Highlight</h2>
+<p>Duis facilisis nisi quis risus tristique pellentesque. Aliquam a ex tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. <mark>Sed ac tempor tortor, ut lobortis erat.</mark> Vivamus gravida sem massa, ut lobortis neque consectetur sit amet. Morbi sed eros cursus, euismod tellus et, sollicitudin mi. Nam eu velit efficitur, consectetur mauris rutrum, ultrices odio.</p>
+<details>
+<summary>Code example</summary>
+<pre class="language-html"><code class="language-html">Duis facilisis nisi quis risus tristique pellentesque. Aliquam a ex tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>mark</span><span class="token punctuation">></span></span>Sed ac tempor tortor, ut lobortis erat.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>mark</span><span class="token punctuation">></span></span> Vivamus gravida sem massa, ut lobortis neque consectetur sit amet. Morbi sed eros cursus, euismod tellus et, sollicitudin mi. Nam eu velit efficitur, consectetur mauris rutrum, ultrices odio.</code></pre>
+</details>
+<hr>
+<h2>Markdown rich text editing</h2>
+<p><strong>Aliquam a ex tellus.</strong><br>
+<em>Sed ac tempor tortor, ut lobortis erat.</em></p>
+<details>
+<summary>Code example</summary>
+<pre class="language-markdown"><code class="language-markdown"><span class="token bold"><span class="token punctuation">**</span><span class="token content">Aliquam a ex tellus.</span><span class="token punctuation">**</span></span>      <br><span class="token italic"><span class="token punctuation">_</span><span class="token content">Sed ac tempor tortor, ut lobortis erat.</span><span class="token punctuation">_</span></span></code></pre>
+</details>
+<hr>
+<h2>Auto dark mode</h2>
+<p>If you switch your system to darkmode the site, will use the darkmode css.</p>
+<p><img src="http://localhost:8080/img/kitchen-sink/kitchen-sink-auto-dark-mode-example.png" alt="Auto dark mode exmaple"></p>
+
+                </div>
+                <div class="edit-on-github-link">
+<hr>
+<p >
+
+	<small><a href="https://github.com/pietrop/11ty-auto-navigation-book-template/blob/master/./src/kitchen sink.md">Edit this page on GitHub <i class="fab fa-github"></i></a></small>
+</p>
+
+</div>
+            </div>
+
+          
+          
+        </main>
+      </div>
+       
+<footer class="footer">
+
+    <nav>
+        <ul class="contacts-list">
+            <li>
+                <a
+                    href="mailto:pietro.passarelli@gmail.com?Subject=Hello&body=Hi Pietro, %0D%0A Was reading your website, and I've got a question..."
+                    class="author-social" target="_blank" rel="noopener noreferrer">
+                    <i class="far fa-envelope"></i>
+                    E-mail</a> <span></span>
+            </li>
+            <li>
+                <a 
+                    href="https://twitter.com/pietropassarell" target="_blank" rel="noopener noreferrer"> 
+                    <i class="fab fa-twitter"></i> Twitter</a>
+            </li>
+            <li>
+                <a 
+                    href="https://github.com/pietrop/11ty-auto-navigation-book-template" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-github"></i> GitHub</a>
+            </li>
+            <li>
+                <a 
+                    href="https://uk.linkedin.com/in/pietropassarelli" target="_blank"
+                    rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i> Linkedin</a>
+            </li>
+
+            <li>
+                <a 
+                    href="https://www.instagram.com/pietro.ps" target="_blank"
+                    rel="noopener noreferrer"><i class="fab fa-instagram"></i> Instagram</a>
+            </li>
+        </ul>
+    </nav>
+</footer>
+
+
+    </div>
+    <script type="text/javascript">
+      ddtreemenu.createTree("treemenu3", true)
+    </script>
+    <script>
+    // Logic to adjust syntax highlighting based on whether dark mode is on 
+    // in the system or not
+    const prismEl = document.querySelector('#prism-css');
+    const DARK = 'dark';
+    const LIGHT = 'light';
+    const PRISM_LIGHT_URL = "https://unpkg.com/prismjs@1.20.0/themes/prism.css";
+    // https://unpkg.com/browse/prismjs@0.0.1/themes/ coy, dark, funky,okaidia, tomorrow, twilight
+    const PRISM_DARK_URL = "https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css"
+
+    function init() {
+      const DARK = 'dark';
+      const LIGHT = 'light';
+      const isSystemDarkMode = matchMedia &&
+        matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (isSystemDarkMode) {
+        prismEl.href = PRISM_DARK_URL;
+      }
+
+      // Event listener to change with system change
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const changedColourScheme = e.matches ? DARK : LIGHT;
+        if (changedColourScheme === DARK) {
+          prismEl.href = PRISM_DARK_URL;
+        } else {
+          prismEl.href = PRISM_LIGHT_URL;
+        }
+      });
+    }
+
+    init();
+  </script>
+  </body>
+</html>

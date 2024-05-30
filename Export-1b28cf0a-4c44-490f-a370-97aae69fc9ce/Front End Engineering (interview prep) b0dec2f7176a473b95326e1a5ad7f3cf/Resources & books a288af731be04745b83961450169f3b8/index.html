@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en_US">
+
+  <head>
+    <title>
+        11ty auto navigation book template - </title>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Markdown directory structure-based navigation with eleventy-plugin-navigation.">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="http://localhost:8080/11ty-auto-navigation-book-template/public/css/normalize.min.css" defer/>
+    <link rel="stylesheet" href="http://localhost:8080/11ty-auto-navigation-book-template/public/css/style.css" defer>
+    <link rel="stylesheet" href="http://localhost:8080/11ty-auto-navigation-book-template/public/css/mobile.css" defer>
+    <link rel="stylesheet" href="http://localhost:8080/11ty-auto-navigation-book-template/public/css/dark-mode.css" defer>
+    <link rel="stylesheet" href="http://localhost:8080/11ty-auto-navigation-book-template/public/css/fontawesome-free-5.15.4-web/css/all.min.css"/>
+
+    <script type="text/javascript" >
+        /***********************************************
+      * Simple Tree Menu- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
+      * Please keep this notice intact
+      * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
+      ***********************************************/
+    </script>
+    
+<script type="text/javascript">
+var persisteduls = new Object()
+var ddtreemenu = new Object()
+
+ddtreemenu.closefolder = "http://localhost:8080/11ty-auto-navigation-book-template/public/simpletreemenu/closed.gif"; //set image path to "closed" folder image
+ddtreemenu.openfolder = "http://localhost:8080/11ty-auto-navigation-book-template/public/simpletreemenu/open.gif"; //set image path to "open" folder image
+
+//////////No need to edit beyond here///////////////////////////
+
+ddtreemenu.createTree = function (treeid, enablepersist, persistdays) {
+    var ultags = document.getElementById(treeid).getElementsByTagName("ul")
+    if (typeof persisteduls[treeid] == "undefined")
+        persisteduls[treeid] = (enablepersist == true && ddtreemenu.getCookie(treeid) != "") ? ddtreemenu.getCookie(treeid).split(",") : ""
+    for (var i = 0; i < ultags.length; i++)
+        ddtreemenu.buildSubTree(treeid, ultags[i], i)
+    if (enablepersist == true) { //if enable persist feature
+        var durationdays = (typeof persistdays == "undefined") ? 1 : parseInt(persistdays)
+        ddtreemenu.dotask(window, function () { ddtreemenu.rememberstate(treeid, durationdays) }, "unload") //save opened UL indexes on body unload
+    }
+}
+
+ddtreemenu.buildSubTree = function (treeid, ulelement, index) {
+    ulelement.parentNode.className = "submenu"
+    if (typeof persisteduls[treeid] == "object") { //if cookie exists (persisteduls[treeid] is an array versus "" string)
+        if (ddtreemenu.searcharray(persisteduls[treeid], index)) {
+            ulelement.setAttribute("rel", "open")
+            ulelement.style.display = "block"
+            ulelement.parentNode.style.backgroundImage = "url(" + ddtreemenu.openfolder + ")"
+        }
+        else
+            ulelement.setAttribute("rel", "closed")
+    } //end cookie persist code
+    else if (ulelement.getAttribute("rel") == null || ulelement.getAttribute("rel") == false) //if no cookie and UL has NO rel attribute explicted added by user
+        ulelement.setAttribute("rel", "closed")
+    else if (ulelement.getAttribute("rel") == "open") //else if no cookie and this UL has an explicit rel value of "open"
+        ddtreemenu.expandSubTree(treeid, ulelement) //expand this UL plus all parent ULs (so the most inner UL is revealed!)
+    ulelement.parentNode.onclick = function (e) {
+        var submenu = this.getElementsByTagName("ul")[0]
+        if (submenu.getAttribute("rel") == "closed") {
+            submenu.style.display = "block"
+            submenu.setAttribute("rel", "open")
+            ulelement.parentNode.style.backgroundImage = "url(" + ddtreemenu.openfolder + ")"
+        }
+        else if (submenu.getAttribute("rel") == "open") {
+            submenu.style.display = "none"
+            submenu.setAttribute("rel", "closed")
+            ulelement.parentNode.style.backgroundImage = "url(" + ddtreemenu.closefolder + ")"
+        }
+        ddtreemenu.preventpropagate(e)
+    }
+    ulelement.onclick = function (e) {
+        ddtreemenu.preventpropagate(e)
+    }
+}
+
+ddtreemenu.expandSubTree = function (treeid, ulelement) { //expand a UL element and any of its parent ULs
+    var rootnode = document.getElementById(treeid)
+    var currentnode = ulelement
+    currentnode.style.display = "block"
+    currentnode.parentNode.style.backgroundImage = "url(" + ddtreemenu.openfolder + ")"
+    while (currentnode != rootnode) {
+        if (currentnode.tagName == "UL") { //if parent node is a UL, expand it too
+            currentnode.style.display = "block"
+            currentnode.setAttribute("rel", "open") //indicate it's open
+            currentnode.parentNode.style.backgroundImage = "url(" + ddtreemenu.openfolder + ")"
+        }
+        currentnode = currentnode.parentNode
+    }
+}
+
+ddtreemenu.flatten = function (treeid, action) { //expand or contract all UL elements
+    var ultags = document.getElementById(treeid).getElementsByTagName("ul")
+    for (var i = 0; i < ultags.length; i++) {
+        ultags[i].style.display = (action == "expand") ? "block" : "none"
+        var relvalue = (action == "expand") ? "open" : "closed"
+        ultags[i].setAttribute("rel", relvalue)
+        ultags[i].parentNode.style.backgroundImage = (action == "expand") ? "url(" + ddtreemenu.openfolder + ")" : "url(" + ddtreemenu.closefolder + ")"
+    }
+}
+
+ddtreemenu.rememberstate = function (treeid, durationdays) { //store index of opened ULs relative to other ULs in Tree into cookie
+    var ultags = document.getElementById(treeid).getElementsByTagName("ul")
+    var openuls = new Array()
+    for (var i = 0; i < ultags.length; i++) {
+        if (ultags[i].getAttribute("rel") == "open")
+            openuls[openuls.length] = i //save the index of the opened UL (relative to the entire list of ULs) as an array element
+    }
+    if (openuls.length == 0) //if there are no opened ULs to save/persist
+        openuls[0] = "none open" //set array value to string to simply indicate all ULs should persist with state being closed
+    ddtreemenu.setCookie(treeid, openuls.join(","), durationdays) //populate cookie with value treeid=1,2,3 etc (where 1,2... are the indexes of the opened ULs)
+}
+
+////A few utility functions below//////////////////////
+
+ddtreemenu.getCookie = function (Name) { //get cookie value
+    var re = new RegExp(Name + "=[^;]+", "i"); //construct RE to search for target name/value pair
+    if (document.cookie.match(re)) //if cookie found
+        return document.cookie.match(re)[0].split("=")[1] //return its value
+    return ""
+}
+
+ddtreemenu.setCookie = function (name, value, days) { //set cookei value
+    var expireDate = new Date()
+    //set "expstring" to either future or past date, to set or delete cookie, respectively
+    var expstring = expireDate.setDate(expireDate.getDate() + parseInt(days))
+    document.cookie = name + "=" + value + "; expires=" + expireDate.toGMTString() + "; path=/";
+}
+
+ddtreemenu.searcharray = function (thearray, value) { //searches an array for the entered value. If found, delete value from array
+    var isfound = false
+    for (var i = 0; i < thearray.length; i++) {
+        if (thearray[i] == value) {
+            isfound = true
+            thearray.shift() //delete this element from array for efficiency sake
+            break
+        }
+    }
+    return isfound
+}
+
+ddtreemenu.preventpropagate = function (e) { //prevent action from bubbling upwards
+    if (typeof e != "undefined")
+        e.stopPropagation()
+    else
+        event.cancelBubble = true
+}
+
+ddtreemenu.dotask = function (target, functionref, tasktype) { //assign a function to execute to an event handler (ie: onunload)
+    var tasktype = (window.addEventListener) ? tasktype : "on" + tasktype
+    if (target.addEventListener)
+        target.addEventListener(tasktype, functionref, false)
+    else if (target.attachEvent)
+        target.attachEvent(tasktype, functionref)
+}
+
+</script>
+    <style>
+.treeview ul{ /*CSS for Simple Tree Menu*/
+    margin: 0;
+    padding: 0;
+    }
+    
+    .treeview li{ /*Style for LI elements in general (excludes an LI that contains sub lists)*/
+    background: transparent url('http://localhost:8080/11ty-auto-navigation-book-template/public/simpletreemenu/list.gif') no-repeat left center;
+    list-style-type: none;
+    padding-left: 22px;
+    margin-bottom: 3px;
+    }
+    
+    .treeview li.submenu{ /* Style for LI that contains sub lists (other ULs). */
+    background: transparent url('http://localhost:8080/11ty-auto-navigation-book-template/public/simpletreemenu/closed.gif') no-repeat left 1px;
+    cursor: hand !important;
+    cursor: pointer !important;
+    }
+    
+    
+    .treeview li.submenu ul{ /*Style for ULs that are children of LIs (submenu) */
+    display: none; /*Hide them by default. Don't delete. */
+    }
+    
+    .treeview .submenu ul li{ /*Style for LIs of ULs that are children of LIs (submenu) */
+    cursor: default;
+    }
+
+  </style>
+
+    <!-- Syntax highlight  -->
+    <link id="prism-css" href="http://localhost:8080/11ty-auto-navigation-book-template/public/css/prism.css" rel="stylesheet" defer>
+    <link rel="shortcut icon" href="http://localhost:8080/11ty-auto-navigation-book-template/public/favicon.ico">
+
+
+     <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144"
+    href="/public/apple-touch-icon-precomposed.png" defer>
+  <!-- <link rel="shortcut icon" href="/public/favicon.ico"> -->
+
+  <!-- ////////// Favicon ////////// -->
+  <!-- For old IEs -->
+  
+  <!-- For IE10 Metro -->
+  <meta name="msapplication-TileColor" content="#FFFFFF">
+  <meta name="msapplication-TileImage" content="favicon-144.png" async>
+  <meta name="theme-color" content="#ffffff">
+  <!-- Chrome for Android -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" sizes="192x192" href="/public/favicon.ico/favicon-192.png" async>
+  <!-- ////////// Favicons end ////////// -->
+
+
+  <!--  -->
+  <!-- Open graph -->
+  <meta property="og:title" content="">
+  <meta property="og:description" content="Markdown directory structure-based navigation with eleventy-plugin-navigation.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=3289&amp;q=80" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="675" />
+  <!-- Twitter -->
+  <meta name="twitter:title" content="">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@pietropassarell">
+  <meta name="twitter:description" content="Markdown directory structure-based navigation with eleventy-plugin-navigation.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=3289&amp;q=80">
+  <meta name="twitter:creator" content="@pietropassarell">
+
+  <!--  -->
+
+  
+
+</head>
+
+  <body>
+    <div class="container default-pages">
+      
+      <div class="wrapper">
+
+        
+
+
+
+
+
+
+<nav class="navigation-primary navigation-primary--light stretch-horizontal-M"><div class="btn-toggle-page-wrapper">
+ <button class="btn-toggle-page" id="nav-bar-btn-toggle"> <i class="fas fa-bars"></i></button>
+ </div>
+  <div class="wrapper-site-info"><p>
+      <b>11ty auto navigation book template</b>
+    </p>
+    <p>
+      <i>Markdown directory structure-based navigation with eleventy-plugin-navigation.</i>
+    </p><p>
+        <a href="https://github.com/pietrop/11ty-auto-navigation-book-template"  target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-layer-group"></i></a> <code>1.0.0</code>
+      </p><img class="site-owner-image" src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=3289&amp;q=80" alt="test" width="100%" height="auto"></div><form class="search-form" onsubmit="duckSearch()" action="javascript:void(0)">
+    <input id="searchField" type="text" value="" placeholder="Search..."> <img class="duck-icon" src="http://localhost:8080/11ty-auto-navigation-book-template/img/rubber-duck.png" alt="decoration rubber duck" width="20" height="20">
+</form>
+
+
+<script type="text/javascript">
+    function duckSearch() {
+        var searchField = document.getElementById("searchField");
+        if (searchField && searchField.value) {
+            var query = escape("site:http://localhost:8080/11ty-auto-navigation-book-template"+" "+ searchField.value);
+            window.open ( "https://duckduckgo.com/?q=" + query, "_blank");
+        }
+    }
+</script>
+
+      <a href="javascript:ddtreemenu.flatten('treemenu3', 'expand')" class="navigation-link">Expand All</a> | <a href="javascript:ddtreemenu.flatten('treemenu3', 'contact')" class="navigation-link">Collapse All</a>
+
+      
+
+      
+  </ul>
+
+  <ul class="navigation-link navigation-primary__items treeview"  id="treemenu3">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template'
+        class="navigation-link
+          navigation-primary__link
+          
+          
+        "
+      >
+            <span title="Home"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🏡</span>
+              Home
+            </span>
+          </a></li>
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/how-to-use/ '
+        class="navigation-link
+          navigation-primary__link
+          
+          
+        "
+      >
+            <span title="How to use"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🚧</span>
+              How to use
+            </span>
+          </a></li>
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/kitchen-sink/ '
+        class="navigation-link
+          navigation-primary__link
+          
+          
+        "
+      >
+            <span title="Kitchen sink"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🍳</span>
+              Kitchen sink
+            </span>
+          </a></li>
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/Moby Dick/ '
+        class="navigation-link
+          navigation-primary__link
+          
+          
+        "
+      >
+            <span title="Moby Dick"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🚢</span>
+              Moby Dick
+            </span>
+          </a><ul class="navigation-link navigation-primary__sub-items">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/Moby Dick/CHAPTER 1. Loomings/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 1. Loomings"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐳</span>
+              CHAPTER 1. Loomings
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/Moby Dick/CHAPTER 2. The Carpet-Bag/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 2. The Carpet-Bag"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐋</span>
+              CHAPTER 2. The Carpet-Bag
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/Moby Dick/CHAPTER 3. The Spouter-Inn/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 3. The Spouter-Inn"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji"></span>
+              CHAPTER 3. The Spouter-Inn
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/Moby Dick/CHAPTER 4. The Counterpane/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 4. The Counterpane"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji"></span>
+              CHAPTER 4. The Counterpane
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/Moby Dick/CHAPTER 5. Breakfast/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="CHAPTER 5. Breakfast"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji"></span>
+              CHAPTER 5. Breakfast
+            </span>
+          </a></li>
+              </ul></li>
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/animals/ '
+        class="navigation-link
+          navigation-primary__link
+          
+          
+        "
+      >
+            <span title="Animals"
+          class="navigation-link navigation-primary__link-text"
+        >
+              <span class="emoji">🦒</span>
+              Animals
+            </span>
+          </a><ul class="navigation-link navigation-primary__sub-items">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/animals/birds/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Birds"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐦</span>
+              Birds
+            </span>
+          </a><ul class="navigation-link navigation-primary__sub-items">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/animals/birds/eagle/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="eagle"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🦅</span>
+              eagle
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/animals/birds/piggeon/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="piggeon"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji"></span>
+              piggeon
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/animals/birds/falcon/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="falcon"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji"></span>
+              falcon
+            </span>
+          </a></li>
+              </ul></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/animals/mammals/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Mammals"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐬</span>
+              Mammals
+            </span>
+          </a><ul class="navigation-link navigation-primary__sub-items">
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/animals/mammals/tigers/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Tigers"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🐯</span>
+              Tigers
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/animals/mammals/humans/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Humans"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🧑</span>
+              Humans
+            </span>
+          </a></li>
+              
+        
+        
+
+        <li
+     class="navigation-link navigation-primary__sub-item"
+    >
+          
+          
+          <a
+        
+        href=' http://localhost:8080/11ty-auto-navigation-book-template/animals/mammals/bats/ '
+        class="navigation-link
+          navigation-primary__sub-link
+          
+          
+        "
+      >
+            <span title="Bats"
+          class="navigation-link navigation-primary__sub-link-text"
+        >
+              <span class="emoji">🦇</span>
+              Bats
+            </span>
+          </a></li>
+              </ul></li>
+              </ul></li></ul>
+</nav>
+
+        <main class="main">
+          <div class="btn-toggle-page-wrapper">
+            <button class="btn-toggle-page" id="main-btn-toggle">
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+          <br/><div class="post-wrapper">
+    <div class="post"><div class="post-content-wrapper">
+                <div class="post-content">
+                    <h1>Resources &amp; books</h1>
+<h2>Books</h2>
+<p><a href="https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/0984782850/ref=sr_1_1?dchild=1&amp;hvadid=241870593966&amp;hvdev=c&amp;hvlocphy=9003565&amp;hvnetw=g&amp;hvqmt=e&amp;hvrand=4053313781637567459&amp;hvtargid=kwd-20040243067&amp;hydadcr=16409_10304044&amp;keywords=cracking+the+coding+interview&amp;qid=1621625276&amp;sr=8-1" target="_blank" rel="noopener noreferrer">Cracking the Coding Interview: 189 Programming Questions and Solutions</a></p>
+<p><a href="https://www.amazon.com/Amazon-Way-Leadership-Principles-Disruptive-ebook/dp/B00KHT2UJS" target="_blank" rel="noopener noreferrer">The Amazon Way: 14 Leadership Principles Behind the World's Most Disruptive Company</a></p>
+<p>for amazon leadership principles - also useful to prep for behavioral questions</p>
+<p><a href="https://www.apress.com/gp/book/9781484241516" target="_blank" rel="noopener noreferrer">The Full Stack Developer - Your Essential Guide to the Everyday Skills Expected of a Modern Full Stack Web Developer | Chris Northwood | Apress</a></p>
+<p>Great for overview, and identifying potential gaps in your own knowledge</p>
+<h2>CS Data Structures &amp; Algorithms</h2>
+<p><a href="https://runestone.academy/runestone/books/published/pythonds/index.html" target="_blank" rel="noopener noreferrer">Problem Solving with Algorithms and Data Structures using Python - Problem Solving with Algorithms and Data Structures</a></p>
+<p><a href="https://www.amazon.com/Introduction-Algorithms-3rd-MIT-Press/dp/0262033844/ref=sr_1_2?dchild=1&amp;keywords=The+Algorithm+Design+Manual+2ed+by+Steven+S.+Skiena&amp;qid=1621625359&amp;sr=8-2" target="_blank" rel="noopener noreferrer">Introduction to Algorithms, 3rd Edition (The MIT Press)</a></p>
+<p><a href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener noreferrer">GeeksforGeeks | A computer science portal for geeks</a></p>
+<p><a href="https://www.manning.com/books/grokking-algorithms" target="_blank" rel="noopener noreferrer">Grokking Algorithms</a></p>
+<h2>Clean code</h2>
+<p><a href="https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882" target="_blank" rel="noopener noreferrer">Clean Code: A Handbook of Agile Software Craftsmanship</a></p>
+<p><a href="https://youtu.be/7EmboKQH8lM" target="_blank" rel="noopener noreferrer">Clean Code - Uncle Bob / Lesson 1</a></p>
+<p>Video series of the book, with uncle Bob</p>
+<p><a href="https://javascript.info/ninja-code" target="_blank" rel="noopener noreferrer">Ninja code</a></p>
+<p><a href="https://github.com/ryanmcdermott/clean-code-javascript" target="_blank" rel="noopener noreferrer">ryanmcdermott/clean-code-javascript</a></p>
+<p><a href="https://medium.com/mindorks/how-to-write-clean-code-lessons-learnt-from-the-clean-code-robert-c-martin-9ffc7aef870c" target="_blank" rel="noopener noreferrer">How to write clean code? Lessons learnt from &quot;The Clean Code&quot; - Robert C. Martin</a></p>
+<h2>JS / Node Js and design patters</h2>
+<p><a href="https://www.amazon.com/Node-js-Design-Patterns-production-grade-applications/dp/1839214112/ref=sr_1_2?dchild=1&amp;keywords=node-js-design-patterns&amp;qid=1621625569&amp;sr=8-2" target="_blank" rel="noopener noreferrer">Node.js Design Patterns: Design and implement production-grade Node.js applications using proven patterns and techniques, 3rd Edition</a></p>
+<p>It has a very good explanation of the event loop + design patters in JS</p>
+<p><a href="https://youtu.be/pN6jk0uUrD8" target="_blank" rel="noopener noreferrer">Namaste JavaScript 🙏 Course - JS Video Tutorials by Akshay Saini</a></p>
+<p><a href="https://eloquentjavascript.net/" target="_blank" rel="noopener noreferrer">Eloquent JavaScript</a></p>
+<p><a href="https://dev.to/lydiahallie/series/3341" target="_blank" rel="noopener noreferrer">About DEV - DEV Community</a></p>
+<p><a href="https://github.com/goldbergyoni/nodebestpractices" target="_blank" rel="noopener noreferrer">goldbergyoni/nodebestpractices</a></p>
+<h2>CSS</h2>
+<p><a href="https://www.css-for-js.dev/" target="_blank" rel="noopener noreferrer">CSS for JavaScript Developers | An online course that teaches the fundamentals of CSS for React/Vue devs</a></p>
+<p><a href="https://www.youtube.com/channel/UC7TizprGknbDalbHplROtag" target="_blank" rel="noopener noreferrer">Layout Land</a></p>
+<p>CSS</p>
+<p><a href="https://sparkbox.com/foundry/thoughtful_css_architecture" target="_blank" rel="noopener noreferrer">Thoughtful CSS Architecture and Organization</a></p>
+<p>CSS and design system</p>
+<h2>Resources</h2>
+<p><a href="https://developer.mozilla.org/en-US/" target="_blank" rel="noopener noreferrer">MDN Web Docs</a></p>
+<p><a href="https://javascript.info/" target="_blank" rel="noopener noreferrer">The Modern JavaScript Tutorial</a></p>
+<p><a href="https://cs50.harvard.edu/" target="_blank" rel="noopener noreferrer">CS50</a></p>
+<p><a href="https://developers.google.com/web" target="_blank" rel="noopener noreferrer">Web | Google Developers</a></p>
+<p><a href="https://adriann.github.io/software_archeology.html" target="_blank" rel="noopener noreferrer">Software Archeology</a></p>
+<p><a href="https://www.smashingmagazine.com/" target="_blank" rel="noopener noreferrer">Smashing Magazine - For Web Designers And Developers</a></p>
+<p><a href="https://browser.engineering/" target="_blank" rel="noopener noreferrer">Web Browser Engineering</a></p>
+<p><a href="https://techdevguide.withgoogle.com/" target="_blank" rel="noopener noreferrer">Home - Google Tech Dev Guide</a></p>
+<p><a href="https://cheatsheetseries.owasp.org/" target="_blank" rel="noopener noreferrer">Introduction</a></p>
+<h2>Coding practice</h2>
+<p><a href="https://adriann.github.io/programming_problems.html" target="_blank" rel="noopener noreferrer">Simple Programming Problems</a></p>
+<p><a href="https://leetcode.com/" target="_blank" rel="noopener noreferrer">LeetCode - The World's Leading Online Programming Learning Platform</a></p>
+<p>payed but pretty much a standard for data structures and algo questions</p>
+<p><a href="https://coderbyte.com/interview-kit/algorithms" target="_blank" rel="noopener noreferrer">Coderbyte | The #1 Coding Assessment Platform</a></p>
+<p><a href="https://www.topcoder.com/" target="_blank" rel="noopener noreferrer">Top Technology Talent On-Demand</a></p>
+<p><a href="https://www.topcoder.com/thrive/search?tags%5B%5D=Competitive%20Programming%20Tutorials" target="_blank" rel="noopener noreferrer">Topcoder Thrive | Topcoder Community | Topcoder</a></p>
+<p><a href="https://www.freecodecamp.org/" target="_blank" rel="noopener noreferrer">freeCodeCamp.org</a></p>
+<p><a href="https://www.qualified.io/" target="_blank" rel="noopener noreferrer">Qualified - The Most Effective Platform for Assessing Software Engineers</a></p>
+<p>Not coding practices per se, but more of a platform that is sometimes used for assesment.</p>
+<h2>Blog Posts</h2>
+<p><a href="https://medium.com/@chen.reuven/the-ultimate-study-guide-for-front-end-interview-776fa3ead1b3" target="_blank" rel="noopener noreferrer">The Ultimate Study Guide For Front End Interview</a></p>
+<p><a href="https://dev.to/blanchloe/32-what-is-the-difference-between-a-frontend-developer-and-a-frontend-engineer-5el5" target="_blank" rel="noopener noreferrer">32 : What is the difference between a frontend developer and a frontend Engineer?</a></p>
+<p><a href="https://www.freecodecamp.org/news/cracking-the-front-end-interview-9a34cd46237/#.xuf0qz3at" target="_blank" rel="noopener noreferrer">Cracking the front-end interview</a></p>
+<p><a href="https://github.com/poteto/hiring-without-whiteboards" target="_blank" rel="noopener noreferrer">poteto/hiring-without-whiteboards</a></p>
+<p><a href="https://www.pluralsight.com/blog/tutorials/code-review" target="_blank" rel="noopener noreferrer">Engineering manager's guide to code review</a></p>
+<h2>Blogs</h2>
+<p><a href="https://noti.st/rachelandrew" target="_blank" rel="noopener noreferrer">Rachel Andrew</a></p>
+<p><a href="https://www.youtube.com/channel/UCJ0_R6U3ZClQDGpVJNjuPAQ" target="_blank" rel="noopener noreferrer">Rachel Andrew</a></p>
+<p><a href="https://jakearchibald.com/" target="_blank" rel="noopener noreferrer">Blog - JakeArchibald.com</a></p>
+<p><a href="https://www.lydiahallie.io/" target="_blank" rel="noopener noreferrer">Lydia Hallie</a></p>
+<h2>Interviews</h2>
+<p><a href="https://youtube.com/playlist?list=PLlasXeu85E9ef4G2RuyDK3Qqbwmk_UH3a" target="_blank" rel="noopener noreferrer">Interview Experience - Software Engineer</a></p>
+<p><a href="https://www.youtube.com/channel/UCaO6VoaYJv4kS-TQO_M-N_g" target="_blank" rel="noopener noreferrer">Clément Mihailescu</a></p>
+<h2>Tools</h2>
+<p><a href="https://chrome.google.com/webstore/detail/wayback-machine/fpnmgdkabkmnadcjpehmlllkndpkmiak?hl=en-US" target="_blank" rel="noopener noreferrer">Wayback Machine</a></p>
+<p>Chrome extension to add a page to Internet archive way back machine</p>
+<p><a href="https://jsonplaceholder.typicode.com/" target="_blank" rel="noopener noreferrer">JSONPlaceholder</a></p>
+<p>Mock json end point</p>
+
+                </div>
+                <div class="edit-on-github-link">
+<hr>
+<p >
+
+	<small><a href="https://github.com/pietrop/11ty-auto-navigation-book-template/blob/master/./src/Export-1b28cf0a-4c44-490f-a370-97aae69fc9ce/Front End Engineering (interview prep) b0dec2f7176a473b95326e1a5ad7f3cf/Resources &amp; books a288af731be04745b83961450169f3b8.md">Edit this page on GitHub <i class="fab fa-github"></i></a></small>
+</p>
+
+</div>
+            </div>
+
+          
+          
+        </main>
+      </div>
+       
+<footer class="footer">
+
+    <nav>
+        <ul class="contacts-list">
+            <li>
+                <a
+                    href="mailto:pietro.passarelli@gmail.com?Subject=Hello&body=Hi Pietro, %0D%0A Was reading your website, and I've got a question..."
+                    class="author-social" target="_blank" rel="noopener noreferrer">
+                    <i class="far fa-envelope"></i>
+                    E-mail</a> <span></span>
+            </li>
+            <li>
+                <a 
+                    href="https://twitter.com/pietropassarell" target="_blank" rel="noopener noreferrer"> 
+                    <i class="fab fa-twitter"></i> Twitter</a>
+            </li>
+            <li>
+                <a 
+                    href="https://github.com/pietrop/11ty-auto-navigation-book-template" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-github"></i> GitHub</a>
+            </li>
+            <li>
+                <a 
+                    href="https://uk.linkedin.com/in/pietropassarelli" target="_blank"
+                    rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i> Linkedin</a>
+            </li>
+
+            <li>
+                <a 
+                    href="https://www.instagram.com/pietro.ps" target="_blank"
+                    rel="noopener noreferrer"><i class="fab fa-instagram"></i> Instagram</a>
+            </li>
+        </ul>
+    </nav>
+</footer>
+
+
+    </div>
+    <script type="text/javascript">
+      ddtreemenu.createTree("treemenu3", true)
+    </script>
+    <script>
+    // Logic to adjust syntax highlighting based on whether dark mode is on 
+    // in the system or not
+    const prismEl = document.querySelector('#prism-css');
+    const DARK = 'dark';
+    const LIGHT = 'light';
+    const PRISM_LIGHT_URL = "https://unpkg.com/prismjs@1.20.0/themes/prism.css";
+    // https://unpkg.com/browse/prismjs@0.0.1/themes/ coy, dark, funky,okaidia, tomorrow, twilight
+    const PRISM_DARK_URL = "https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css"
+
+    function init() {
+      const DARK = 'dark';
+      const LIGHT = 'light';
+      const isSystemDarkMode = matchMedia &&
+        matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (isSystemDarkMode) {
+        prismEl.href = PRISM_DARK_URL;
+      }
+
+      // Event listener to change with system change
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const changedColourScheme = e.matches ? DARK : LIGHT;
+        if (changedColourScheme === DARK) {
+          prismEl.href = PRISM_DARK_URL;
+        } else {
+          prismEl.href = PRISM_LIGHT_URL;
+        }
+      });
+    }
+
+    init();
+  </script>
+
+    <script  type="text/javascript">
+      const navBarBtnToggleEl = document.querySelector('#nav-bar-btn-toggle');
+      const mainBtnToggleEl = document.querySelector('#main-btn-toggle');
+      const navigationPrimaryEl = document.querySelector('.navigation-primary')
+      const mainPrimaryEl = document.querySelector('.main')
+      navBarBtnToggleEl.onclick = () => {
+        navigationPrimaryEl.style.display = 'none';
+        mainPrimaryEl.style.display = 'block';
+         mainPrimaryEl.style.width = '100%';
+      }
+
+      mainBtnToggleEl.onclick = () => {
+        navigationPrimaryEl.style.display = 'block';
+        mainPrimaryEl.style.display = 'none';
+      }
+    </script>
+  </body>
+</html>
