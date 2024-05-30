@@ -1,1 +1,0 @@
-# Differences between the browser layout, compositing and painting.
