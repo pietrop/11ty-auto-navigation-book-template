@@ -1,0 +1,1 @@
+# Reduce browser reflows and when to promote an element to the GPU.

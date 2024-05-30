@@ -1,0 +1,1 @@
+# Center-weighted average metering

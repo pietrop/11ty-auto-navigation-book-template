@@ -17,4 +17,4 @@ Anything you want, a book, notes, documentation etc..
 
 ## Examples
 
--  [How to craft compelling stories out of audio video interviews](https://pietropassarelli.com/how-to-craft-compelling-stories-out-of-audio-video-interviews/) - [github](https://github.com/pietrop/how-to-craft-compelling-stories-out-of-audio-video-interviews)
+-  [How to craft compelling stories out of audio video interviews](https://pietropassarelli.net/how-to-craft-compelling-stories-out-of-audio-video-interviews/) - [github](https://github.com/pietrop/how-to-craft-compelling-stories-out-of-audio-video-interviews)

@@ -63,13 +63,13 @@ Test details summary html tag
 ## link
 
 
-In a quam at [my site](https://pietropassarelli.com) nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.
+In a quam at [my site](https://pietropassarelli.net) nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.
 
  <details>
 <summary>Code example</summary>
 
 ```markdown
-In a quam at [my site](https://pietropassarelli.com) nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.
+In a quam at [my site](https://pietropassarelli.net) nisi bibendum blandit vel at mi. Quisque semper massa in est vulputate dictum.
 ```
 </details>
 

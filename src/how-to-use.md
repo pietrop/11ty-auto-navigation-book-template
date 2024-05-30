@@ -54,7 +54,7 @@ Similarly, if there are no social media or contacts links under the `owner` attr
 ```js/15-17,28-34
 const environment = process.env.ELEVENTY_ENV;
 const PROD_ENV = 'prod';
-const prodUrl = 'https://pietropassarelli.com/11ty-auto-navigation-book-template';
+const prodUrl = 'https://pietropassarelli.net/11ty-auto-navigation-book-template';
 const devUrl = 'http://localhost:8080';
 const baseUrl = environment === PROD_ENV ? prodUrl : devUrl;
 const isProd = environment === PROD_ENV;
